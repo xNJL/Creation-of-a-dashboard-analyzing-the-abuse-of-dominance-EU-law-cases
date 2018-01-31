@@ -34,6 +34,14 @@ pr_dict = {'appeal unfounded':'PVOI=RF', 'against penalty, successful':'SANC%3DO
 
 
 def get_data(browser, df, keyword):
+    '''
+    is the first and most important function: it has 3 arguments that need to be passed to it: 
+    - browser (a reference to the web browser controlled by Python), 
+    - df (a dataframe on which we will save the data extracted), 
+    -  keyword (referring to the kind of case that is taken into consideration). 
+    Thanks to the Selenium library, we use Python to loop4 through the pages of the search result (which depends on the keyword) and collect the data of interest (Title and CELEX number). 
+    Ultimately, the dataframe is saved in a .csv5 file. This is useful because it allows us to avoid having to re-run the program in the future, all the data is now in .csv file and saves a lot of time.
+    '''
     url = 'http://eur-lex.europa.eu/search.html?lang=en&text=abuse+of+dominant+position&qid=1512057591145&type=quick&DTS_SUBDOM=EU_CASE_LAW&scope=EURLEX&FM_CODED=JUDG&PR_CODED='+keyword
     browser.get(url)
     res = browser.find_element_by_class_name('resultNumber')
@@ -61,6 +69,10 @@ def get_data(browser, df, keyword):
     return df
 
 def clean_df(df, keyword):
+    '''
+    This function, as the name suggests, provides us with better data by cleaning some features of the dataframe that are unnecessary for the goal of the project.
+    For example, sometimes the get_data() function created an extra column in the dataframe with no content, and this function removes it.
+    '''
     try:
         del df["Unnamed: 0"]
     except:
@@ -74,6 +86,9 @@ def clean_df(df, keyword):
     return df
 
 def create_links(df, keyword):
+    '''
+    Uses the CELEX number to manipulate the URL of eur-lex.europa.eu and generates the links to the court decisions.
+    '''
     n = len(df)
     df["Link"] = None
     for i in range(n):
