@@ -28,7 +28,9 @@ pr_dict = {'appeal unfounded':'PVOI=RF', 'against penalty, successful':'SANC%3DO
            'Action for failre to act - unfounded':'CARE%3DRF'}
 
 def date_formatter(date):
-    '''This function transform the dates from how it is in EUR-LEX in how it is readed by Kibana
+    '''This is a simple function that transform the date contained in the title in the format that is accepted by Kibana. 
+       This means transforming something like ‘4 January 1994’ into something like ‘1994-01-04’. 
+       Obviously, the function needs to do some cleansing even before having the date written as ‘4 January 1994’.
     '''
     months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     date = date.split('(')[0]
@@ -131,7 +133,8 @@ def info_extractor(df, keyword):
     return output
 
 def extract_all(keywords):
-    ''' This function loops through all .csv
+    ''' This function loops through all the .csv file, transforms it in a Dataframe
+        and calls info_extractor() on it. It collects all the strings in a list.
     '''
     output = []
     for keyword in keywords:
