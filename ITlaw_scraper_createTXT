@@ -1,0 +1,68 @@
+from selenium import webdriver 
+import pandas as pd
+import os
+
+chromeOptions = webdriver.ChromeOptions()
+chromeOptions.add_experimental_option('excludeSwitches', ['disable-component-update'])
+chromeOptions.add_argument('headless')
+
+pr_codes_appeals = ['PVOI=RF', 'SANC%3DOB', 'SANC%3DRF', 'PVOI%3DRI', 'SANC', 'PVOI%3DOB']
+
+pr_codes_actions = ['ANNU=RF','ANNU=OB','ANNU','ANNU%3DRI','RESP%3DOB','CONS%3DOB','RESP%3DRF','CARE%3DRI','CARE%3DOB','RESP%3DRI','RENV','CARE%3DNL','ANNU%3DNL','CONS%3DRF','CARE%3DRF']
+
+#create dictionary of pr codes
+pr_dict = {'appeal unfounded':'PVOI=RF', 'against penalty, successful':'SANC%3DOB',
+           'against penalty, unfounded':'SANC%3DRF', 'inadmissible-appeal':'PVOI%3DRI',
+           'against penalty':'SANC', 'successful':'PVOI%3DOB', 
+           'annullment-unfounded':'ANNU=RF','annulment successful':'ANNU=OB', 'annullment':'ANNU', 'inadmissible-action':'ANNU%3DRI',
+           'for damages, successful':'RESP%3DOB', 'failure to fulfil obligations, successful':'CONS%3DOB',
+           'for damages, unfounded':'RESP%3DRF', 'failure to act, inadmissible':'CARE%3DRI',
+           'failure to act, successful':'CARE%3DOB', 'damages, inadmissible':'RESP%3DRI',
+           'judgment delivered after back reference':'RENV', 'Action for failure to act - decision unnecessary':'CARE%3DNL',
+           'Action for annulment - decision unnecessary':'ANNU%3DNL', 'Action for failure to fulfill obligations - unfounded':'CONS%3DRF',
+           'Action for failure to act - unfounded':'CARE%3DRF'}
+
+keywords = ['appeal unfounded', 'against penalty, successful',
+           'against penalty, unfounded', 'inadmissible-appeal',
+           'against penalty', 'successful', 
+           'annullment-unfounded','annulment successful', 'annullment', 'inadmissible-action',
+           'for damages, successful', 'failure to fulfil obligations, successful',
+           'for damages, unfounded', 'failure to act, inadmissible',
+           'failure to act, successful', 'damages, inadmissible',
+           'judgment delivered after back reference', 'Action for failure to act - decision unnecessary',
+           'Action for annulment - decision unnecessary', 'Action for failure to fulfill obligations - unfounded',
+           'Action for failure to act - unfounded']
+
+def download_all(keywords = keywords):
+    browser = webdriver.Chrome(chrome_options=chromeOptions)
+    for keyword in keywords:
+        print(keyword)
+        cwdir = os.getcwd()
+        pr_code = pr_dict[keyword]
+        df = pd.read_csv("cases_"+pr_code+".csv", usecols = ["Title","CELEX","Link"])
+        create_txts(browser, df, keyword)
+        os.chdir(cwdir)
+    browser.close()
+    
+def create_txts(browser,df,keyword):
+    folder = 'cases-'+keyword+'-txt'
+    if not(os.getcwd().endswith(folder)):
+        try:
+            os.chdir(folder)
+        except:
+            os.mkdir(folder)
+            os.chdir(folder)
+    missed = 0
+    links = list(df["Link"])
+    for i in range(len(links)):
+        print('page = ',i)
+        browser.get(links[i])
+        try:
+            data = browser.find_element_by_xpath('//*[@id="document1"]/div/div')
+            txt = open('case'+str(i),'w',encoding = 'utf-8')
+            txt.write(data.text)
+            txt.close()
+        except:
+            missed += 1
+    print('Extracted texts: ',len(links)-missed, 'Missed texts: ',missed)
+    return missed
