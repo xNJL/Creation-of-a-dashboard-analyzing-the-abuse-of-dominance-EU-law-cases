@@ -34,6 +34,9 @@ keywords = ['appeal unfounded', 'against penalty, successful',
            'Action for failure to act - unfounded']
 
 def download_all(keywords = keywords):
+    '''
+    This the main function that loops through every keyword
+    '''
     browser = webdriver.Chrome(chrome_options=chromeOptions)
     for keyword in keywords:
         print(keyword)
@@ -45,6 +48,9 @@ def download_all(keywords = keywords):
     browser.close()
     
 def create_txts(browser,df,keyword):
+    '''
+    This function carries out the extraction (and storage) of a single keyword. 
+    '''
     folder = 'cases-'+keyword+'-txt'
     if not(os.getcwd().endswith(folder)):
         try:
