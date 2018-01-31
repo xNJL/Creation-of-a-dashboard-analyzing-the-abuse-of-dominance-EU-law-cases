@@ -28,7 +28,8 @@ pr_dict = {'appeal unfounded':'PVOI=RF', 'against penalty, successful':'SANC%3DO
            'Action for failre to act - unfounded':'CARE%3DRF'}
 
 def date_formatter(date):
-    '''This function transform the dates from how it is in EUR-LEX in how it is readed by Kibana
+    '''It takes a date as input and outputs a date written in the ‘yyyy-mm-dd’ format. This function is similar to the one in the ITlaw_create_JSON.py file,
+       but more complex because the dates extracted from Wikipedia do not follow a predefined format.
     '''
     months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
     date = date.split(';')[0]
@@ -59,7 +60,7 @@ def date_formatter(date):
     return date
 
 def create_dict():
-    ''' This function creates a dictionary with the data extracted from wikipedia and as keys the company names
+    ''' This function creates a dictionary with the data extracted from Wikipedia and as keys the company names
     '''
     file = open('C:\\Users\\rdangelo\\Desktop\\final_data.txt', encoding = 'utf-8')
     text = file.readlines()
@@ -89,7 +90,17 @@ def geolocalizzatore(city):
     return location
 
 def clean_values(d):
-    '''This function create a single dictionary that has as value the JSON string representing the company
+    '''selects only the data that we want to keep and calls the geolocalizzatore() function in order to create the location key and values. 
+           We store data about:
+           - 'Headquarter'
+           - 'Operating income'
+           - 'Number of employees'
+           - 'Total equity'
+           - 'Total assets'
+           - 'Founded'
+           - 'Net income'
+           - 'Industry'
+
     '''
     keys = ['Headquarter','Operating income','Number of employees','Total equity','Total assets','Founded','Net income', 'Industry']
     l = list(d.keys())
