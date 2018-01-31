@@ -13,7 +13,8 @@ def get_json():
     return data
 
 def remove_copies(data):
-    ''' This function checks the data extracted and remooves the copies
+    ''' This function loops through all the elements if the list, 
+        checks if there are other elements that differ only by the case type and in case unify them.
     '''
     dic = 0
     #loop through cases
@@ -38,7 +39,7 @@ def remove_copies(data):
     return data
 
 def save_json(data):
-    ''' This transform the data in a JSON file
+    ''' This takes as input the list created by remove_copies() and transforms it into a .JSON file.
     '''
     l = []
     for i in range(len(data)):
